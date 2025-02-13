@@ -8,6 +8,7 @@ import {
   Query,
   Param,
   Inject,
+  NotFoundException,
   // NotAcceptableException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -24,7 +25,9 @@ export class UsersController {
   // POST /users
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
-    return this.userServiceClient.send('createUser', createUserDto);
+    const exist_user = this.userServiceClient.send('createUser', createUserDto);
+    if (exist_user) return new NotFoundException('Este usuario ya existe');
+    return exist_user;
   }
 
   // @Get()
