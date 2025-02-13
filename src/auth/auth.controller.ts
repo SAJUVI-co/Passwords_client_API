@@ -9,12 +9,14 @@ import {
   Param,
   Inject,
   NotFoundException,
+  // NotFoundException,
   // NotAcceptableException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRole } from './entities/user.entity';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('users') // Prefijo para las rutas
 export class UsersController {
@@ -25,15 +27,22 @@ export class UsersController {
   // POST /users
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
-    const exist_user = this.userServiceClient.send('createUser', createUserDto);
-    if (exist_user) return new NotFoundException('Este usuario ya existe');
-    return exist_user;
+    try {
+      const newUser = this.userServiceClient.send('createUser', createUserDto);
+
+      return newUser;
+    } catch (error) {
+      // console.log(newUser);
+      // console.log(error);
+      return new NotFoundException(error);
+    }
   }
 
-  // @Get()
-  // findAllUsers() {
-  //   return 'hola mundo';
-  // }
+  //? SE NECESITAN LOS ROLES PARA DAR ACCEESO A ESTE METODO
+  @Get()
+  findAllUsers() {
+    return this.userServiceClient.send({ cmd: 'findAllUsers' }, {});
+  }
 
   // GET /users
   // @Get('test')
@@ -43,6 +52,7 @@ export class UsersController {
   //   return res;
   // }
 
+  //? SE NECESITAN LOS ROLES PARA DAR ACCEESO A ESTE METODO
   // GET /users/sorted-by-creation
   @Get('sorted-by-creation')
   findAllSortedByCreation(@Query('order') order: 'ASC' | 'DESC') {
@@ -52,33 +62,34 @@ export class UsersController {
     );
   }
 
+  //? SE NECESITAN LOS ROLES PARA DAR ACCEESO A ESTE METODO
   // GET /users/sorted-by-update
   @Get('sorted-by-update')
   findAllSortedByUpdate(@Query('order') order: 'ASC' | 'DESC') {
     return this.userServiceClient.send({ cmd: 'findAllSortedByUpdate' }, order);
   }
 
+  //? SE NECESITAN LOS ROLES PARA DAR ACCEESO A ESTE METODO
   // GET /users/online
   @Get('online')
   findOnlineUsers() {
     return this.userServiceClient.send({ cmd: 'findOnlineUsers' }, {});
   }
 
+  //? SE NECESITAN LOS ROLES PARA DAR ACCEESO A ESTE METODO
   // GET /users/role
   @Get('role')
   findUsersByRole(@Query('role') role: UserRole) {
     return this.userServiceClient.send({ cmd: 'findUsersByRole' }, role);
   }
 
-  // GET /users/:username/login
-  @Get(':username/login')
-  findOneUser(
-    @Param('username') username: string,
-    @Query('password') password: string,
-  ) {
-    return this.userServiceClient.send('findOneUser', { username, password });
+  // Post /users/login
+  @Post('login')
+  findOneUser(@Body() loginUserDto: LoginUserDto) {
+    return this.userServiceClient.send('login', loginUserDto);
   }
 
+  //? SE NECESITAN LOS ROLES PARA DAR ACCEESO A ESTE METODO
   // GET /users/deleted
   @Get('deleted')
   findDeletedUsers() {

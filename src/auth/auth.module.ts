@@ -18,3 +18,4 @@ import { UsersController } from './auth.controller';
   controllers: [UsersController],
 })
 export class AuthModule {}
+// http://localhost:3000/juan123/login?password=password123
