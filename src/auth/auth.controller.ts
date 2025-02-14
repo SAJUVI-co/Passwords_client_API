@@ -27,7 +27,7 @@ export class UsersController {
   ) {}
 
   // POST /users
-  @Post()
+  @Post() //!check
   createUser(@Body() createUserDto: CreateUserDto) {
     try {
       const newUser = this.userServiceClient.send('createUser', createUserDto);
@@ -41,18 +41,20 @@ export class UsersController {
   }
 
   //? SE NECESITAN LOS ROLES PARA DAR ACCEESO A ESTE METODO
-  @Get()
+  @Get() //!check
   findAllUsers(
     @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: string,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: string,
+    @Query('order', new DefaultValuePipe('ASC'))
+    order: string,
   ) {
     return this.userServiceClient.send(
       { cmd: 'findAllUsers' },
-      { skip, limit },
+      { skip, limit, order },
     );
   }
 
-  @Get('/all')
+  @Get('/all') //!check
   findAll() {
     return this.userServiceClient.send({ cmd: 'findAll' }, {});
   }
@@ -83,7 +85,7 @@ export class UsersController {
   }
 
   //? SE NECESITAN LOS ROLES PARA DAR ACCEESO A ESTE METODO
-  // GET /users/online
+  // GET /users/online //!check
   @Get('online')
   findOnlineUsers() {
     return this.userServiceClient.send({ cmd: 'findOnlineUsers' }, {});
@@ -96,7 +98,7 @@ export class UsersController {
     return this.userServiceClient.send({ cmd: 'findUsersByRole' }, role);
   }
 
-  // Post /users/login
+  // Post /users/login //!check
   @Post('login')
   findOneUser(@Body() loginUserDto: LoginUserDto) {
     return this.userServiceClient.send('login', loginUserDto);
@@ -113,12 +115,6 @@ export class UsersController {
   @Patch()
   updateUser(@Body() updateUserDto: UpdateUserDto) {
     return this.userServiceClient.send('updateUser', updateUserDto);
-  }
-
-  // PATCH /users/online-status
-  @Patch('online-status')
-  updateOnlineStatus(@Body() data: { userId: number; status: boolean }) {
-    return this.userServiceClient.send({ cmd: 'updateOnlineStatus' }, data);
   }
 
   // DELETE /users/:id
