@@ -9,6 +9,8 @@ import {
   Param,
   Inject,
   NotFoundException,
+  ParseIntPipe,
+  DefaultValuePipe,
   // NotFoundException,
   // NotAcceptableException,
 } from '@nestjs/common';
@@ -40,8 +42,19 @@ export class UsersController {
 
   //? SE NECESITAN LOS ROLES PARA DAR ACCEESO A ESTE METODO
   @Get()
-  findAllUsers() {
-    return this.userServiceClient.send({ cmd: 'findAllUsers' }, {});
+  findAllUsers(
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: string,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: string,
+  ) {
+    return this.userServiceClient.send(
+      { cmd: 'findAllUsers' },
+      { skip, limit },
+    );
+  }
+
+  @Get('/all')
+  findAll() {
+    return this.userServiceClient.send({ cmd: 'findAll' }, {});
   }
 
   // GET /users
