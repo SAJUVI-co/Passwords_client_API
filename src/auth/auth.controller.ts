@@ -118,8 +118,8 @@ export class UsersController {
   }
 
   // DELETE /users/:id
-  @Delete(':id')
-  removeUser(@Param('id') id: number) {
+  @Delete('delete')
+  removeUser(@Body('id') id: number) {
     return this.userServiceClient.send('removeUser', id);
   }
 }
