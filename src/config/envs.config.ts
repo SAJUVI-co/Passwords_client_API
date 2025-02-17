@@ -2,20 +2,20 @@ import 'dotenv/config';
 import * as joi from 'joi';
 
 interface Envs {
-  MYSQL_ROOT_PASSWORD: string;
-  MYSQL_DATABASE: string;
-  MYSQL_USER: string;
-  MYSQL_PASSWORD: string;
-  DOCKER_DB_PORT: number;
+  SERVER_PORT: number;
+  SERVER_HOST: string;
+  SERVICE_USER_NAME: string;
+  SERVICE_USER_HOST: string;
+  SERVICE_USER_PORT: number;
 }
 
 const schema = joi
   .object({
-    MYSQL_ROOT_PASSWORD: joi.string().required(),
-    MYSQL_DATABASE: joi.string().required(),
-    MYSQL_USER: joi.string().required(),
-    MYSQL_PASSWORD: joi.string().required(),
-    DOCKER_DB_PORT: joi.number().required(),
+    SERVER_PORT: joi.number().required(),
+    SERVER_HOST: joi.string().required(),
+    SERVICE_USER_NAME: joi.string().required(),
+    SERVICE_USER_HOST: joi.string().required(),
+    SERVICE_USER_PORT: joi.number().required(),
   })
   .unknown(true);
 
@@ -26,9 +26,9 @@ if (data.error) {
 }
 
 export const {
-  MYSQL_ROOT_PASSWORD,
-  MYSQL_DATABASE,
-  MYSQL_USER,
-  MYSQL_PASSWORD,
-  DOCKER_DB_PORT,
+  SERVER_PORT,
+  SERVER_HOST,
+  SERVICE_USER_NAME,
+  SERVICE_USER_HOST,
+  SERVICE_USER_PORT,
 } = data.value as Envs;
