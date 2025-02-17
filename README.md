@@ -1,99 +1,267 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+El API Gateway sirve como punto de entrada centralizado para interactuar con los microservicios. Este módulo actúa como intermediario entre los clientes y el microservicio de gestión de usuarios. Se encarga de recibir las solicitudes HTTP, validarlas y enviarlas al microservicio correspondiente utilizando `ClientProxy` de NestJS.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+---
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Configuración del Entorno
 
-## Description
+El servicio requiere que las siguientes variables de entorno estén configuradas:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+| Variable | Descripción | Ejemplo |
+| --- | --- | --- |
+| `SERVER_PORT` | Puerto donde corre el API Gateway | `3000` |
+| `SERVER_HOST` | Dirección del host del API Gateway | `localhost` |
+| `SERVICE_USER_NAME` | Nombre del microservicio de usuarios | `your service name` |
+| `SERVICE_USER_HOST` | Host del microservicio de usuarios | `localhost` |
+| `SERVICE_USER_PORT` | Puerto del microservicio de usuarios | `your service port` |
 
-## Project setup
+---
+
+## Inicialización
+
+### Ejecutar el API Gateway en modo desarrollador:
 
 ```bash
-$ pnpm install
+pnpm install
+pnpm start:dev
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ pnpm run start
+## Endpoints
 
-# watch mode
-$ pnpm run start:dev
+### **Crear Usuario**
 
-# production mode
-$ pnpm run start:prod
+- **URL:** `/users`
+- **Método:** `POST`
+- **Descripción:** Crea un nuevo usuario.
+- **Cuerpo de la solicitud:**
+    
+    ```json
+    {
+      "email": "user@exdfmple.com",
+      "username": "user123456", // se recomienda que el usuario sea el numero de cedula
+      "password": "password123"
+    }
+    ```
+    
+- **Rspuesta Exitosa:**
+    > Esta respuesta es temporal, la idea es que sea un json y se validen los errores
+    ```json
+    true
+    ```
+    
+- **Errores:**
+    - `500 Bad Request`: Datos inválidos.
+---
+
+### **Listar Usuarios con Paginación**
+
+- **URL:** `/users`
+- **Método:** `GET`
+- **Descripción:** Obtiene una lista de usuarios con paginación.
+- **Parámetros de Consulta:**
+    - `skip` (opcional): Número de registros a omitir (por defecto: `0`).
+    - `limit` (opcional): Número máximo de registros a devolver (por defecto: `10`).
+    - `order` (opcional): Orden de los resultados (`ASC` o `DESC`).
+- **Respuesta Exitosa:**
+    
+    ```json
+  {
+      "users": [
+          {
+              "id": 6,
+              "username": "example123",
+              "email": "exampl3e@exdfmple.com",
+              "email_recuperacion": "exampl3e@exdfmple.com",
+              "rol": "invite",
+              "online": false,
+              "created_at": "2025-02-18T01:32:14.150Z",
+              "updated_at": "2025-02-18T01:32:14.150Z",
+              "deleted_at": null,
+              "sequentialId": 2
+          },
+           {
+            "id": 17,
+            "username": "example1234",
+            "email": "exampl2e@exdfmple.com",
+            "email_recuperacion": "exampl2e@exdfmple.com",
+            "rol": "invite",
+            "online": false,
+            "created_at": "2025-02-18T01:46:31.621Z",
+            "updated_at": "2025-02-18T01:46:31.621Z",
+            "deleted_at": null,
+            "sequentialId": 3
+        }
+      ],
+      "total": 2
+  }
+    
+    ```
+    
+- **Errores:**
+    - `500 Internal Server Error`: Error en la conexión con el microservicio.
+
+---
+
+### **Listar Todos los Usuarios**
+
+- **URL:** `/users`
+- **Método:** `GET`
+- **Descripción:** Obtiene todos los usuarios sin filtros ni paginación.
+- **Respuesta Exitosa:**
+    
+    ```json
+    [
+      {
+          "id": 6,
+          "username": "example123",
+          "email": "exampl3e@exdfmple.com",
+          "email_recuperacion": "exampl3e@exdfmple.com",
+          "rol": "invite",
+          "online": false,
+          "created_at": "2025-02-18T01:32:14.150Z",
+          "updated_at": "2025-02-18T01:32:14.150Z",
+          "deleted_at": null,
+          "sequentialId": 2
+      }
+    ]
+    
+    ```
+    
+- **Errores:**
+    - `500 Internal Server Error`: Error en la conexión con el microservicio.
+
+---
+
+### **Usuarios Ordenados por Fecha de Creación**
+> RUTA NO FUNCIONAL ACTUALMENTE
+- **URL:** `/users/sorted-by-creation`
+- **Método:** `GET`
+- **Descripción:** Lista los usuarios ordenados por fecha de creación.
+- **Parámetros de Consulta:**
+    - `order` (opcional): Orden de los resultados (`ASC` o `DESC`).
+- **Respuesta Exitosa:**
+    
+    ```json
+    {
+        "users": [
+            {
+                "id": 6,
+                "username": "example123",
+                "email": "exampl3e@exdfmple.com",
+                "email_recuperacion": "exampl3e@exdfmple.com",
+                "rol": "invite",
+                "online": false,
+                "created_at": "2025-02-18T01:32:14.150Z",
+                "updated_at": "2025-02-18T01:32:14.150Z",
+                "deleted_at": null,
+                "sequentialId": 2
+            },
+            {
+              "id": 17,
+              "username": "example1234",
+              "email": "exampl2e@exdfmple.com",
+              "email_recuperacion": "exampl2e@exdfmple.com",
+              "rol": "invite",
+              "online": false,
+              "created_at": "2025-02-18T01:46:31.621Z",
+              "updated_at": "2025-02-18T01:46:31.621Z",
+              "deleted_at": null,
+              "sequentialId": 3
+          }
+        ],
+        "total": 2
+    }
+    ```
+    
+
+---
+
+### **Iniciar Sesión**
+
+- **URL:** `/users/login`
+- **Método:** `POST`
+- **Descripción:** Autentica a un usuario y actualiza su estado en línea.
+- **Cuerpo de la solicitud:**
+    
+    ```json
+    {
+      "username": "example123",
+      "password": "exampl3e@exdfmple.com"
+    }
+    ```
+    
+- **Respuesta Exitosa:**
+    
+    ```json
+    {
+      "id": 33,
+      "username": "example7",
+      "email": "exampl8@exmple.com",
+      "email_recuperacion": "exampl8@exmple.com",
+      "rol": "invite",
+      "online": true,
+      "created_at": "2025-02-18T01:55:38.047Z",
+      "updated_at": "2025-02-18T02:20:36.000Z",
+      "deleted_at": null
+    }
+    
+    ```
+    
+- **Errores:**
+    - `401 Unauthorized`: Credenciales inválidas.
+
+---
+
+### **Eliminar Usuario**
+
+- **URL:** `/users/delete`
+- **Método:** `DELETE`
+- **Descripción:** Elimina un usuario específico.
+- **Cuerpo de la solicitud:**
+    
+    ```json
+    json
+    CopiarEditar
+    {
+      "id": 1
+    }
+    
+    ```
+    
+- **Respuesta Exitosa:**
+    
+    ```json
+    json
+    CopiarEditar
+    {
+      "success": true,
+      "message": "Usuario eliminado correctamente."
+    }
+    
+    ```
+    
+- **Errores:**
+    - `404 Not Found`: Usuario no encontrado.
+    - `500 Internal Server Error`: Error en el microservicio.
+
+---
+
+## Manejo de Errores
+
+El manejo de errores en el API Gateway sigue las mismas estrategias que el microservicio de usuarios:
+
+1. **Errores de Validación:** Se devuelven con un código `400 Bad Request` e incluyen detalles específicos sobre los errores de validación.
+2. **Errores del Microservicio:** Los errores internos se devuelven con un código `500 Internal Server Error`.
+3. **Errores de Autenticación:** Devuelven un código `401 Unauthorized` cuando las credenciales son incorrectas.
+4. **Errores de Negocio:** Devuelven un código `409 Conflict` para errores como duplicidad de datos.
+5. **Errores no Controlados:** Cualquier error inesperado se captura globalmente y se devuelve como un error genérico con un código `500 Internal Server Error`.
+
+**Ejemplo de Respuesta de Error Genérico:**
+
+```json
+{
+  "statusCode": 500,
+  "message": "Ocurrió un error inesperado."
+}
 ```
-
-## Run tests
-
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
