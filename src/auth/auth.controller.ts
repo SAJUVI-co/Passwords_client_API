@@ -31,8 +31,15 @@ export class UsersController {
   createUser(@Body() createUserDto: CreateUserDto) {
     try {
       const newUser = this.userServiceClient.send('createUser', createUserDto);
-
-      return newUser;
+      if (newUser)
+        return {
+          success: true,
+          message: 'Usuario creado exitosamente.',
+        };
+      return {
+        success: false,
+        message: 'Hubo un error al crear el usuario',
+      };
     } catch (error) {
       // console.log(newUser);
       // console.log(error);
