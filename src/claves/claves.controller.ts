@@ -9,6 +9,7 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   ParseBoolPipe,
+  Param,
   // Patch,
   // Delete,
 } from '@nestjs/common';
@@ -53,10 +54,15 @@ export class ClavesController {
     }
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.clavesService.findOne(+id);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    try {
+      const user = this.userServiceClient.send({ cmd: 'findOneUser' }, { id });
+      return user;
+    } catch (error: any) {
+      return new NotFoundException(error);
+    }
+  }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateClaveDto: UpdateClaveDto) {
