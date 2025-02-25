@@ -4,9 +4,12 @@ import {
   Body,
   Inject,
   NotFoundException,
-  // Get,
+  Get,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
+  ParseBoolPipe,
   // Patch,
-  // Param,
   // Delete,
 } from '@nestjs/common';
 // import { UpdateClaveDto } from './dto/update-clave.dto';
@@ -32,10 +35,23 @@ export class ClavesController {
     }
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.clavesService.findAll();
-  // }
+  @Get()
+  findAllUsers(
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: string,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: string,
+    @Query('order', new DefaultValuePipe('ASC')) order: string,
+    @Query('sh', ParseBoolPipe) sh: boolean,
+  ) {
+    try {
+      const users = this.userServiceClient.send(
+        { cmd: 'findAllUsers' },
+        { skip, limit, order, sh },
+      );
+      return users;
+    } catch (error: any) {
+      return new NotFoundException(error);
+    }
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
