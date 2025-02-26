@@ -3,14 +3,14 @@
 Conección y uso del servicio de usuarios.
 
 ## Endpoints
-- - [Crear Usuario](###-**Crear-Usuario**)
-- - [Listar Usuarios con Paginación](###-**Listar-Usuarios-con-Paginación**)
-- - [Listar Todos los Usuarios](###-**Listar-Todos-los-Usuarios**)
-- - [Usuarios Ordenados por Fecha de Creación](###-**Usuarios-Ordenados-por-Fecha-de-Creación**)
-- - [Iniciar Sesión](###-**Iniciar-Sesión**)
-- - [Eliminar Usuario](###-**Eliminar-Usuario**)
+- [Crear Usuario](#crear-usuario)
+- [Listar Usuarios con Paginación](#listar-usuarios-con-paginación)
+- [Listar Todos los Usuarios](#listar-todos-los-usuarios)
+- [Usuarios Ordenados por Fecha de Creación](#usuarios-ordenados-por-fecha-de-creación)
+- [Iniciar Sesión](#iniciar-sesión)
+- [Eliminar Usuario](#eliminar-usuario)
 
-### **Crear Usuario**
+### Crear Usuario
 
 - **URL:** `/users`
 - **Método:** `POST`
@@ -25,7 +25,7 @@ Conección y uso del servicio de usuarios.
     }
     ```
     
-- **Rspuesta Exitosa:**
+- Rspuesta Exitosa:
     > Esta respuesta es temporal, la idea es que sea un json y se validen los errores
     ```json
     true
@@ -35,7 +35,7 @@ Conección y uso del servicio de usuarios.
     - `500 Bad Request`: Datos inválidos.
 ---
 
-### **Listar Usuarios con Paginación**
+### Listar Usuarios con Paginación
 
 - **URL:** `/users`
 - **Método:** `GET`
@@ -84,7 +84,7 @@ Conección y uso del servicio de usuarios.
 
 ---
 
-### **Listar Todos los Usuarios**
+### Listar Todos los Usuarios
 
 - **URL:** `/users`
 - **Método:** `GET`
@@ -114,7 +114,7 @@ Conección y uso del servicio de usuarios.
 
 ---
 
-### **Usuarios Ordenados por Fecha de Creación**
+### Usuarios Ordenados por Fecha de Creación
 > RUTA NO FUNCIONAL ACTUALMENTE
 - **URL:** `/users/sorted-by-creation`
 - **Método:** `GET`
@@ -158,7 +158,7 @@ Conección y uso del servicio de usuarios.
 
 ---
 
-### **Iniciar Sesión**
+### Iniciar Sesión
 
 - **URL:** `/users/login`
 - **Método:** `POST`
@@ -194,7 +194,7 @@ Conección y uso del servicio de usuarios.
 
 ---
 
-### **Eliminar Usuario**
+### Eliminar Usuario
 
 - **URL:** `/users/delete`
 - **Método:** `DELETE`

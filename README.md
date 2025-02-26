@@ -1,4 +1,4 @@
-El API Gateway sirve como punto de entrada centralizado para interactuar con los microservicios. Este módulo actúa como intermediario entre los clientes y el microservicio de gestión de usuarios. Se encarga de recibir las solicitudes HTTP, validarlas y enviarlas al microservicio correspondiente utilizando `ClientProxy` de NestJS. [English Doc](./DOCS/english-DOC/)
+El API Gateway sirve como punto de entrada centralizado para interactuar con los microservicios. Este módulo actúa como intermediario entre los clientes y el microservicio de gestión de usuarios. Se encarga de recibir las solicitudes HTTP, validarlas y enviarlas al microservicio correspondiente utilizando `ClientProxy` de NestJS. [English Doc](./DOCS/english-DOC/DOC_EN.md)
 
 ---
 
