@@ -5,13 +5,13 @@ Este controlador maneja la gestión de usuarios en un sistema distribuido median
 #### **📂 Archivo:** `claves.controller.ts`
 
 ## **📌 Endpoints**
-- [Crear un usuario](#**1️⃣-Crear-un-usuario**)
-- [Obtener todos los usuarios](#**2️⃣-Obtener-todos-los-usuarios-(con-filtros)**)
-- [Obtener todos los usuarios eliminados](#**3️⃣-Obtener-usuarios-eliminados**)
-- [Obtener un usuario por ID](#**4️⃣-Obtener-un-usuario-por-ID**)
-- [Eliminar un usuario](#**5️⃣-Eliminar-usuario-(Soft-Delete)**)
-- [Eliminar un usuario permanentemente](#**6️⃣-Eliminar-usuario-(Hard-Delete)**)
-- [Restaurar un usuario](#**7️⃣-Restaurar-usuario**)
+- [Crear un usuario](#1️⃣-Crear-un-usuario)
+- [Obtener todos los usuarios](#2️⃣-Obtener-todos-los-usuarios-(con-filtros))
+- [Obtener todos los usuarios eliminados](#3️⃣-Obtener-usuarios-eliminados)
+- [Obtener un usuario por ID](#4️⃣-Obtener-un-usuario-por-ID)
+- [Eliminar un usuario](#5️⃣-Eliminar-usuario-(Soft-Delete))
+- [Eliminar un usuario permanentemente](#6️⃣-Eliminar-usuario-(Hard-Delete))
+- [Restaurar un usuario](#7️⃣-Restaurar-usuario)
 
 ### **1️⃣ Crear un usuario**
 
