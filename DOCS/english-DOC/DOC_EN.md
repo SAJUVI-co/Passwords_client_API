@@ -1,5 +1,3 @@
-### **English Translation:**  
-
 The API Gateway serves as the centralized entry point for interacting with microservices. This module acts as an intermediary between clients and the user management microservice. It is responsible for receiving HTTP requests, validating them, and forwarding them to the appropriate microservice using NestJS's `ClientProxy`. [Documentación en español](../../README.md)  
 
 ---  
