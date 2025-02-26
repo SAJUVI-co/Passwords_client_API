@@ -30,5 +30,5 @@ pnpm start:dev
 ---  
 
 ## **Route Documentation**  
-- [Users](./DOCS/spanish-DOC/users/USERS.md)  
-- [Keys - Users](./DOCS/spanish-DOC/claves/USERS.md)  
+- [Users](./users/USERS.md)  
+- [Keys - Users](./claves/USERS.md)  
