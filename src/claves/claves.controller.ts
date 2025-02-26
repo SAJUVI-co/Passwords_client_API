@@ -8,12 +8,10 @@ import {
   Query,
   DefaultValuePipe,
   ParseIntPipe,
-  ParseBoolPipe,
   Param,
-  // Patch,
-  // Delete,
+  Delete,
+  Patch,
 } from '@nestjs/common';
-// import { UpdateClaveDto } from './dto/update-clave.dto';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateUserClaveDto } from './dto/create-clave.dto';
 
@@ -24,7 +22,7 @@ export class ClavesController {
   ) {}
 
   @Post()
-  create(@Body() createClaveDto: CreateUserClaveDto) {
+  createUser(@Body() createClaveDto: CreateUserClaveDto) {
     try {
       const newUser = this.userServiceClient.send(
         { cmd: 'createUser' },
@@ -36,17 +34,16 @@ export class ClavesController {
     }
   }
 
-  @Get()
-  findAllUsers(
+  @Get('/all') // Get all users with filters
+  findAllUsersF(
     @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: string,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: string,
     @Query('order', new DefaultValuePipe('ASC')) order: string,
-    @Query('sh', ParseBoolPipe) sh: boolean,
   ) {
     try {
       const users = this.userServiceClient.send(
         { cmd: 'findAllUsers' },
-        { skip, limit, order, sh },
+        { skip, limit, order },
       );
       return users;
     } catch (error: any) {
@@ -54,8 +51,25 @@ export class ClavesController {
     }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get('/all/w') // Get all deleted users
+  findAllW(
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: string,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: string,
+    @Query('order', new DefaultValuePipe('ASC')) order: string,
+  ) {
+    try {
+      const users = this.userServiceClient.send(
+        { cmd: 'findAllDeletedUsers' },
+        { skip, limit, order },
+      );
+      return users;
+    } catch (error: any) {
+      return new NotFoundException(error);
+    }
+  }
+
+  @Get('/one/:id') // Get one user by id
+  findOneU(@Param('id') id: string) {
     try {
       const user = this.userServiceClient.send({ cmd: 'findOneUser' }, { id });
       return user;
@@ -64,13 +78,33 @@ export class ClavesController {
     }
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateClaveDto: UpdateClaveDto) {
-  //   return this.clavesService.update(+id, updateClaveDto);
-  // }
+  @Patch('/d/:id') // Soft delete user
+  softDelUse(@Param('id') id: string) {
+    try {
+      const user = this.userServiceClient.send({ cmd: 'SD_user' }, { id });
+      return user;
+    } catch (error) {
+      return new NotFoundException(error);
+    }
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.clavesService.remove(+id);
-  // }
+  @Delete('/d/:id') // Delete user
+  rm_user(@Param('id') id: string) {
+    try {
+      const user = this.userServiceClient.send({ cmd: 'DEL_use' }, { id });
+      return user;
+    } catch (error: any) {
+      return new NotFoundException(error);
+    }
+  }
+
+  @Patch('/r/:id') // Restore user
+  res_user(@Param('id') id: string) {
+    try {
+      const user = this.userServiceClient.send({ cmd: 'res_User' }, { id });
+      return user;
+    } catch (error: any) {
+      return new NotFoundException(error);
+    }
+  }
 }
