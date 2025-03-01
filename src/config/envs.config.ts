@@ -7,6 +7,10 @@ interface Envs {
   SERVICE_USER_NAME: string;
   SERVICE_USER_HOST: string;
   SERVICE_USER_PORT: number;
+  JWT_SECRET: string;
+  SUROLE: string;
+  ADROLE: string;
+  INROLE: string;
 }
 
 const schema = joi
@@ -16,6 +20,10 @@ const schema = joi
     SERVICE_USER_NAME: joi.string().required(),
     SERVICE_USER_HOST: joi.string().required(),
     SERVICE_USER_PORT: joi.number().required(),
+    JWT_SECRET: joi.string().required(),
+    SUROLE: joi.string().required(),
+    ADROLE: joi.string().required(),
+    INROLE: joi.string().required(),
   })
   .unknown(true);
 
@@ -31,4 +39,8 @@ export const {
   SERVICE_USER_NAME,
   SERVICE_USER_HOST,
   SERVICE_USER_PORT,
+  JWT_SECRET,
+  SUROLE,
+  ADROLE,
+  INROLE,
 } = data.value as Envs;

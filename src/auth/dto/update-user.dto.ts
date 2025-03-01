@@ -6,11 +6,12 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
+import { ADROLE, INROLE, SUROLE } from 'src/config/envs.config';
 
 enum UserRole {
-  SUPERADMIN = 'sudo',
-  ADMIN = 'admin',
-  INVITE = 'invite',
+  SUPERADMIN = Number(SUROLE),
+  ADMIN = Number(ADROLE),
+  INVITE = Number(INROLE),
 }
 
 enum UserOnline {
