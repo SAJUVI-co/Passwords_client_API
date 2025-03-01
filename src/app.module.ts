@@ -1,5 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { LoggerMiddleware } from './logger/logger.middleware';
+import { LoggerMiddleware } from './utils/logger/logger.middleware';
 import { AuthModule } from './auth/auth.module';
 import { ClavesModule } from './claves/claves.module';
 
