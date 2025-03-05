@@ -1,4 +1,5 @@
 import {
+  IsDate,
   IsEmail,
   IsEnum,
   IsNumber,
@@ -8,13 +9,13 @@ import {
 } from 'class-validator';
 import { ADROLE, INROLE, SUROLE } from 'src/config/envs.config';
 
-enum UserRole {
+export enum UserRole {
   SUPERADMIN = Number(SUROLE),
   ADMIN = Number(ADROLE),
   INVITE = Number(INROLE),
 }
 
-enum UserOnline {
+export enum UserOnline {
   ONLINE = 'true',
   OFFLINE = 'false',
 }
@@ -47,4 +48,16 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(UserOnline, { message: 'El estado en línea debe ser: true o false' })
   online?: UserOnline;
+
+  @IsOptional()
+  @IsDate()
+  created_at: Date;
+
+  @IsOptional()
+  @IsDate()
+  updated_at: Date;
+
+  @IsOptional()
+  @IsDate()
+  deleted_at: Date;
 }

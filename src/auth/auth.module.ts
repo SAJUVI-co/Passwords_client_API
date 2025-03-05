@@ -16,11 +16,19 @@ import { JWT_SECRET } from 'src/config/envs.config';
     }),
     ClientsModule.register([
       {
-        name: 'USERS_SERVICE', // Este token debe coincidir con el que se inyecta en el controlador
+        name: 'USERS_SERVICE',
         transport: Transport.TCP,
         options: {
           host: 'localhost',
           port: 5000,
+        },
+      },
+      {
+        name: 'USERS_CACHE',
+        transport: Transport.TCP,
+        options: {
+          host: 'localhost',
+          port: 5001,
         },
       },
     ]),

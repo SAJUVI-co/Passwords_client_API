@@ -10,23 +10,28 @@ import {
   NotFoundException,
   ParseIntPipe,
   DefaultValuePipe,
-  HttpCode,
-  HttpStatus,
+  InternalServerErrorException,
+  UnauthorizedException,
+  // UnauthorizedException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserRole } from './entities/user.entity';
 import { LoginUserDto } from './dto/login-user.dto';
 import { AuthService, Public } from './auth.service';
 import { DateEnum } from './dto/query-user.dto';
+import { lastValueFrom } from 'rxjs';
+import { UserRole } from './entities/user.entity';
 
 @Controller('users') // Prefijo para las rutas
 export class UsersController {
   constructor(
     @Inject('USERS_SERVICE') private readonly userServiceClient: ClientProxy, // Cliente del microservicio
+    @Inject('USERS_CACHE') private readonly cacheClient: ClientProxy,
     private authService: AuthService, // Cliente del microservicio
   ) {}
+
+  //! EL CONTROLADOR PARA LOS USUARIOS DEBE REALIZAR DOS CONSULTAS, UNA PARA EL SERVIIO DEL CACHE Y LA OTRA PARA EL SERVICIO DE USUARIOS
 
   // POST /users
   @Public()
@@ -71,29 +76,39 @@ export class UsersController {
   }
 
   //? SE NECESITAN LOS ROLES PARA DAR ACCEESO A ESTE METODO
-  // GET /users/online //!check
-
-  @Get('online')
-  findOnlineUsers(
-    @Query('skip') skip: number,
-    @Query('limit') limit: number,
-    @Query('order') order: 'ASC' | 'DESC',
-  ) {
-    return this.userServiceClient.send(
-      { cmd: 'findOnlineUsers' },
-      { skip, limit, order },
-    );
-  }
+  // GET /users/online //!NOT FOUND - SE HA ELIMINADO EL ESTADO DE FORMA TEMPORAL
+  // @Get('online')
+  // findOnlineUsers(
+  //   @Query('skip') skip: number,
+  //   @Query('limit') limit: number,
+  //   @Query('order') order: 'ASC' | 'DESC',
+  // ) {
+  //   return this.userServiceClient.send(
+  //     { cmd: 'findOnlineUsers' },
+  //     { skip, limit, order },
+  //   );
+  // }
 
   //? SE NECESITAN LOS ROLES PARA DAR ACCEESO A ESTE METODO
   // GET /users/role
-  @Get('role')
-  findUsersByRole(
+  @Post('role')
+  async findUsersByRole(
     @Query('role') role: UserRole,
     @Query('skip') skip: number,
     @Query('limit') limit: number,
     @Query('order') order: 'ASC' | 'DESC',
+    @Body() body: UpdateUserDto,
   ) {
+    const findUserCache: Promise<any> = await this.authService.verifyPermissions(body.id.toString());
+
+    if (
+      findUserCache !== null &&
+      findUserCache !== undefined &&
+      (await findUserCache).rol === UserRole.INVITE
+    ) {
+      throw new UnauthorizedException('you dont have access');
+    }
+
     return this.userServiceClient.send(
       { cmd: 'findUsersByRole' },
       { role, skip, limit, order },
@@ -101,17 +116,34 @@ export class UsersController {
   }
 
   // Post /users/login //!check
-  @HttpCode(HttpStatus.OK)
   @Post('login')
-  findOneUser(@Body() loginUserDto: LoginUserDto) {
-    const user = this.userServiceClient.send('login', loginUserDto);
-    return user;
+  async findOneUser(@Body() loginUserDto: LoginUserDto) {
+    try {
+      // consulta a la DB
+
+      const user: UpdateUserDto = await lastValueFrom(
+        this.userServiceClient.send('login', loginUserDto),
+      );
+
+      const findUserCache: Promise<any> =
+        await this.authService.verifyPermissions(user.id.toString());
+
+      if (findUserCache) return findUserCache;
+
+      // almacena al usuario en el cache
+      const newUser = await this.authService.createCache(user);
+      // const newUser = await lastValueFrom(newUser$);
+      return newUser;
+    } catch (error: any) {
+      console.error('❌ Error en login:', error);
+      throw new InternalServerErrorException(error);
+    }
   }
 
   // Post /users/login //!check
   @Public()
   @Post('token')
-  tokenGenerate(@Body() user) {
+  tokenGenerate(@Body() user: { username: string; password: string }) {
     const token = this.authService.jsonwebToken(user);
     return token;
   }

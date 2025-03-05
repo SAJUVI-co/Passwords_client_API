@@ -16,7 +16,6 @@ export class User {
   email_recuperacion: string;
   password: string;
   rol: UserRole;
-  online: UserOnline;
   created_at: Date;
   updated_at: Date;
   deleted_at: Date;
