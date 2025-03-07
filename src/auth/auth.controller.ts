@@ -40,6 +40,7 @@ export class UsersController {
   // POST /users
   @Public() // permite el acceso sin el token
   @Post() //!check
+  @UseGuards(LoginGuard)
   createUser(@Body() createUserDto: CreateUserDto) {
     try {
       const newUser = this.userServiceClient.send('createUser', createUserDto);
