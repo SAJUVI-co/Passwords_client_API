@@ -16,6 +16,7 @@ import {
   UnauthorizedException,
   BadRequestException,
   HttpCode,
+  Put,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -327,7 +328,7 @@ export class UsersController {
   }
 
   // solo los usuarios admin pueden usar esta ruta
-  @Patch('/up/r/a') //!check
+  @Put('/up/r/a') //!check
   @UseGuards(LoginGuard)
   async updateUserA(@Body() updateUserDto: UpdateUserDto) {
     if (!updateUserDto.id) throw new BadRequestException('ID is required');
