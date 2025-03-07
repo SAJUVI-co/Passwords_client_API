@@ -268,7 +268,8 @@ export class UsersController {
   @Patch() //!check
   @UseGuards(LoginGuard) // valida que el campo password y username exista en el body
   async updateUser(@Body() updateUserDto: UpdateUserDto) {
-    if (!updateUserDto.id) throw new BadRequestException('ID is required');
+    if (!updateUserDto.id || !updateUserDto.info)
+      throw new BadRequestException('Some field is required');
 
     // lanza error si intenta actualizar el rol
     if (updateUserDto.info?.rol !== undefined) {
