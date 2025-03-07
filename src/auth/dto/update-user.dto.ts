@@ -3,6 +3,7 @@ import {
   IsEmail,
   IsEnum,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
   MinLength,
@@ -20,7 +21,7 @@ export enum UserOnline {
   OFFLINE = 'false',
 }
 
-export class UpdateUserDto {
+export class UserDto {
   @IsNumber()
   id: number;
 
@@ -60,4 +61,19 @@ export class UpdateUserDto {
   @IsOptional()
   @IsDate()
   deleted_at: Date;
+}
+
+export class UpdateUserDto {
+  @IsNumber()
+  id: number;
+
+  @IsString({ message: 'El nombre de usuario debe ser una cadena de texto' })
+  username: string; // EL USUARIO ES LA CÉDULA
+
+  @IsString({ message: 'La contraseña debe ser una cadena de texto' })
+  @MinLength(8, { message: 'La contraseña debe tener al menos 8 caracteres' })
+  password: string;
+
+  @IsObject()
+  info: UserDto;
 }

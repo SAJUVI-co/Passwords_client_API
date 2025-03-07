@@ -1,10 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SetMetadata } from '@nestjs/common';
 import { JWT_SECRET } from 'src/config/envs.config';
-import { UpdateUserDto, UserOnline } from './dto/update-user.dto';
+import { UserDto } from './dto/update-user.dto';
 import { lastValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
+import { UserRole } from './entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -27,16 +28,40 @@ export class AuthService {
     };
   }
 
+  async verifyRol(body: UserDto) {
+    if (!body || body === null || body === undefined)
+      throw new UnauthorizedException(
+        'Sorry, you dont have acces to this route',
+      );
+
+    const newId: string = body?.id ? body.id.toString() : '1';
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const findUserCache: Promise<any> = await this.verifyPermissions(newId);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (!(await findUserCache) || (await findUserCache).rol === UserRole.INVITE)
+      throw new UnauthorizedException(
+        'Sorry, you dont have acces to this route',
+      );
+
+    // console.log(await findUserCache);
+
+    return true;
+  }
+
   async verifyPermissions(id: string) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const info = await lastValueFrom(
       this.cacheClient.send('getUserCache', {
         id: id,
       }),
     );
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return info;
   }
 
-  async createCache(user: UpdateUserDto) {
+  async createCache(user: UserDto) {
     return await lastValueFrom(
       this.cacheClient.send<void>('saveCache', {
         id: user.id.toString(),

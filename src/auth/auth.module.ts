@@ -3,9 +3,9 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UsersController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthGuard } from './auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { JWT_SECRET } from 'src/config/envs.config';
+import { AuthGuard } from './guards/auth.guard';
 
 @Module({
   imports: [
@@ -43,4 +43,3 @@ import { JWT_SECRET } from 'src/config/envs.config';
   ],
 })
 export class AuthModule {}
-// http://localhost:3000/juan123/login?password=password123
