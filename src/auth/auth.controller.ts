@@ -377,6 +377,7 @@ export class UsersController {
 
   // Soft Delete /users/:id
   @Delete('deleteUser')
+  @UseGuards(LoginGuard)
   async deleteUser(@Body() userDto: UserDto) {
     const user: UserDto = await lastValueFrom(
       this.userServiceClient.send('login', {
