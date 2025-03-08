@@ -57,9 +57,9 @@ export class UsersController {
   @HttpCode(200)
   @Post('all')
   async findAllUsers(
-    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: string,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: string,
-    @Query('order', new DefaultValuePipe('ASC')) order: string,
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('order', new DefaultValuePipe('ASC')) order: 'ASC' | 'DESC',
     @Body() body: UserDto,
   ) {
     // const user: UpdateUserDto = await lastValueFrom(
@@ -129,16 +129,11 @@ export class UsersController {
     //     "statusCode": 404
     // }
 
-    await this.authService.verifyRol(body);
-    return this.userServiceClient.send(
-      { cmd: 'findAllUsers' },
-      {
-        skip,
-        limit,
-        order,
-        loginUserDto: { username: body.username, password: body.password },
-      },
-    );
+    return this.authService.findAllUsers(body, {
+      skip,
+      limit,
+      order,
+    });
   }
 
   //? SE NECESITAN LOS ROLES PARA DAR ACCEESO A ESTE METODO

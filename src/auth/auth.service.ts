@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SetMetadata } from '@nestjs/common';
 import { JWT_SECRET } from 'src/config/envs.config';
@@ -79,6 +84,30 @@ export class AuthService {
     } catch (error) {
       return new NotFoundException(error);
     }
+  }
+
+  async findAllUsers(
+    body: UserDto,
+    {
+      skip,
+      limit,
+      order,
+    }: {
+      skip: number;
+      limit: number;
+      order: 'ASC' | 'DESC';
+    },
+  ) {
+    await this.verifyRol(body);
+    return this.userServiceClient.send(
+      { cmd: 'findAllUsers' },
+      {
+        skip,
+        limit,
+        order,
+        loginUserDto: { username: body.username, password: body.password },
+      },
+    );
   }
 }
 
