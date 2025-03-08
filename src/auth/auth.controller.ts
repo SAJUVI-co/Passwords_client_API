@@ -43,12 +43,7 @@ export class UsersController {
   @Post() //!check
   @UseGuards(LoginGuard)
   createUser(@Body() createUserDto: CreateUserDto) {
-    try {
-      const newUser = this.userServiceClient.send('createUser', createUserDto);
-      return newUser;
-    } catch (error) {
-      return new NotFoundException(error);
-    }
+    return this.authService.createUser(createUserDto);
   }
 
   //? SE NECESITAN LOS ROLES PARA DAR ACCEESO A ESTE METODO

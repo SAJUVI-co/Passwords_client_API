@@ -1,4 +1,4 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SetMetadata } from '@nestjs/common';
 import { JWT_SECRET } from 'src/config/envs.config';
@@ -6,11 +6,13 @@ import { UserDto } from './dto/update-user.dto';
 import { lastValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { UserRole } from './entities/user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
+    @Inject('USERS_SERVICE') private readonly userServiceClient: ClientProxy, // Cliente del microservicio
     @Inject('USERS_CACHE') private readonly cacheClient: ClientProxy, // Cliente del microservicio
   ) {}
 
@@ -68,6 +70,15 @@ export class AuthService {
         data: user,
       }),
     );
+  }
+
+  createUser(createUserDto: CreateUserDto) {
+    try {
+      const newUser = this.userServiceClient.send('createUser', createUserDto);
+      return newUser;
+    } catch (error) {
+      return new NotFoundException(error);
+    }
   }
 }
 
