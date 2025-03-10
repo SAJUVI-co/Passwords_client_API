@@ -26,10 +26,7 @@ export class AuthService {
   ) {}
 
   //TODO Genera un token para cada usuario
-  async jsonwebToken(user: {
-    username: string;
-    password: string;
-  }): Promise<{ access_token: string }> {
+  async jsonwebToken(user: LoginUserDto): Promise<{ access_token: string }> {
     const payload = {
       username: user.username,
       email: user.password,
