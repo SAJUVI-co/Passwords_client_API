@@ -56,7 +56,7 @@ export class UsersController {
   // }
   @HttpCode(200)
   @Post('all')
-  async findAllUsers(
+  findAllUsers(
     @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @Query('order', new DefaultValuePipe('ASC')) order: 'ASC' | 'DESC',
