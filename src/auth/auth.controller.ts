@@ -7,10 +7,8 @@ import {
   Body,
   Query,
   Inject,
-  NotFoundException,
   ParseIntPipe,
   DefaultValuePipe,
-  InternalServerErrorException,
   ForbiddenException,
   UseGuards,
   UnauthorizedException,
@@ -26,7 +24,7 @@ import { AuthService, Public } from './auth.service';
 // import { DateEnum } from './dto/query-user.dto';
 import { lastValueFrom } from 'rxjs';
 import { LoginGuard } from './guards/password.guard';
-import { UserRole } from './entities/user.entity';
+import { UserRoleEntity } from './entities/user.entity';
 
 @Controller('users') // Prefijo para las rutas
 export class UsersController {
@@ -240,63 +238,8 @@ export class UsersController {
   // Se puede actualizar todo menos el rol y la fecha de eliminacion
   @Patch() //!check
   @UseGuards(LoginGuard) // valida que el campo password y username exista en el body
-  async updateUser(@Body() updateUserDto: UpdateUserDto) {
-    if (!updateUserDto.id || !updateUserDto.info)
-      throw new BadRequestException('Some field is required');
-
-    // lanza error si intenta actualizar el rol
-    if (updateUserDto.info?.rol !== undefined) {
-      throw new UnauthorizedException(
-        'You dont have access to change the role',
-      );
-    }
-
-    const id = updateUserDto.id.toString();
-
-    //Se valida que el usuario este en el cache
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const user$ = await lastValueFrom(
-      this.cacheClient.send('getUserCache', { id }),
-    );
-
-    // si el usuario esta en el cache, envia la info al servicio
-    if (user$) {
-      // lanza error si alguno de los id no coincide
-      if (
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        updateUserDto.id === user$.id &&
-        updateUserDto.id === updateUserDto.info.id
-      )
-        throw new ForbiddenException();
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (user$.rol !== UserRole.ADMIN)
-        throw new UnauthorizedException(
-          "You don't have access yo update this user",
-        );
-
-      return this.userServiceClient.send('updateUser', updateUserDto.info);
-    }
-
-    // Convertir el Observable en una Promise antes de await
-    const user: UserDto = await lastValueFrom(
-      this.userServiceClient.send('login', {
-        username: updateUserDto.username,
-        password: updateUserDto.password,
-      }),
-    );
-
-    console.log(user);
-
-    // lanza error si alguno de los id no coincide
-    if (
-      updateUserDto.id !== user.id ||
-      updateUserDto.id !== updateUserDto.info.id
-    )
-      throw new ForbiddenException();
-
-    // actualiza el usuario
-    return this.userServiceClient.send('updateUser', updateUserDto.info);
+  updateUser(@Body() updateUserDto: UpdateUserDto) {
+    return this.authService.updateUser(updateUserDto);
   }
 
   // solo los usuarios admin pueden usar esta ruta
@@ -323,7 +266,7 @@ export class UsersController {
         throw new ForbiddenException('Sorry, something is wrong');
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (user$.rol !== UserRole.ADMIN)
+      if (user$.rol !== UserRoleEntity.ADMIN)
         throw new UnauthorizedException(
           "You don't have access yo update this user",
         );
