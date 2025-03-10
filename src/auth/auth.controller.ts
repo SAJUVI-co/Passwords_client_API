@@ -225,14 +225,8 @@ export class UsersController {
   @Public() // permite el acceso sin el token
   @Post('token') //!check
   @UseGuards(LoginGuard) // valida que el campo password y login exista en el body
-  async tokenGenerate(@Body() user: { username: string; password: string }) {
-    const findUser: UpdateUserDto = await lastValueFrom(
-      this.userServiceClient.send('login', user),
-    );
-    if (!findUser) throw new UnauthorizedException();
-
-    const token = this.authService.jsonwebToken(user);
-    return token;
+  tokenGenerate(@Body() user: LoginUserDto) {
+    return this.authService.tokenGenerate(user);
   }
 
   //? SE NECESITAN LOS ROLES PARA DAR ACCEESO A ESTE METODO

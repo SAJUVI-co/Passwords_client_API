@@ -8,7 +8,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { SetMetadata } from '@nestjs/common';
 import { JWT_SECRET } from 'src/config/envs.config';
-import { UserDto } from './dto/update-user.dto';
+import { UpdateUserDto, UserDto } from './dto/update-user.dto';
 import { lastValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { UserRole } from './entities/user.entity';
@@ -132,6 +132,16 @@ export class AuthService {
       console.error('❌ Error en login:', error);
       throw new InternalServerErrorException(error);
     }
+  }
+
+  async tokenGenerate(user: LoginUserDto) {
+    const findUser: UpdateUserDto = await lastValueFrom(
+      this.userServiceClient.send('login', user),
+    );
+    if (!findUser) throw new UnauthorizedException();
+
+    const token = this.jsonwebToken(user);
+    return token;
   }
 }
 
