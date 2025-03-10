@@ -1,4 +1,4 @@
-export enum UserRole {
+export enum UserRoleEntity {
   SUPERADMIN = 'sudo',
   ADMIN = 'admin',
   INVITE = 'invite',
@@ -15,7 +15,7 @@ export class User {
   email: string;
   email_recuperacion: string;
   password: string;
-  rol: UserRole;
+  rol: UserRoleEntity;
   created_at: Date;
   updated_at: Date;
   deleted_at: Date;
