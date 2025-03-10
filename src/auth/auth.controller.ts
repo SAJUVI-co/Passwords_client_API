@@ -217,20 +217,8 @@ export class UsersController {
 
   @Post('login') //!check
   @UseGuards(LoginGuard) // valida que el campo password y login exista en el body
-  async findOneUser(@Body() loginUserDto: LoginUserDto) {
-    try {
-      const user: UserDto = await lastValueFrom(
-        this.userServiceClient.send('login', loginUserDto),
-      );
-
-      // almacena al usuario en el cache
-      const newUser = await this.authService.createCache(user);
-      // const newUser = await lastValueFrom(newUser$);
-      return newUser;
-    } catch (error: any) {
-      console.error('❌ Error en login:', error);
-      throw new InternalServerErrorException(error);
-    }
+  findOneUser(@Body() loginUserDto: LoginUserDto) {
+    return this.authService.findOneUser(loginUserDto);
   }
 
   // Post /users/login //!check

@@ -1,6 +1,7 @@
 import {
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -12,6 +13,7 @@ import { lastValueFrom } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { UserRole } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -35,6 +37,7 @@ export class AuthService {
     };
   }
 
+  // verifica el rol usando el body
   async verifyRol(body: UserDto) {
     if (!body || body === null || body === undefined)
       throw new UnauthorizedException(
@@ -57,6 +60,7 @@ export class AuthService {
     return true;
   }
 
+  // verifica el rol usando el id
   async verifyPermissions(id: string) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const info = await lastValueFrom(
@@ -68,6 +72,7 @@ export class AuthService {
     return info;
   }
 
+  // almacena en cache
   async createCache(user: UserDto) {
     return await lastValueFrom(
       this.cacheClient.send<void>('saveCache', {
@@ -77,6 +82,7 @@ export class AuthService {
     );
   }
 
+  // Crea un usuario
   createUser(createUserDto: CreateUserDto) {
     try {
       const newUser = this.userServiceClient.send('createUser', createUserDto);
@@ -86,6 +92,7 @@ export class AuthService {
     }
   }
 
+  // Busca todos los usuarios
   async findAllUsers(
     body: UserDto,
     {
@@ -108,6 +115,23 @@ export class AuthService {
         loginUserDto: { username: body.username, password: body.password },
       },
     );
+  }
+
+  // Busca un usuario
+  async findOneUser(loginUserDto: LoginUserDto) {
+    try {
+      const user: UserDto = await lastValueFrom(
+        this.userServiceClient.send('login', loginUserDto),
+      );
+
+      // almacena al usuario en el cache
+      const newUser = await this.createCache(user);
+      // const newUser = await lastValueFrom(newUser$);
+      return newUser;
+    } catch (error: any) {
+      console.error('❌ Error en login:', error);
+      throw new InternalServerErrorException(error);
+    }
   }
 }
 
